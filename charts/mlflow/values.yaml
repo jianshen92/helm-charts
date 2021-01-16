@@ -5,13 +5,14 @@
 replicaCount: 1
 
 image:
-  repository: # Image Repository
+  repository: jianshen92/mlflow # Image Repository
   pullPolicy: Always
   tag: 1.13.1 # Image version is sync to MLFlow Version
 
 backendStore:
+  # filepath: 
   postgres:
-    username: # Database Username
+    username: mlflow # Database Username
     host: # Database Host
     port: # Database Port
     database: mlflow # Database Name
@@ -21,12 +22,12 @@ defaultArtifactRoot: # S3 bucket
 
 # set true to expose prometheus
 metrics:
-  enabled: true
+  enabled: false
   metricsStoreDir: prometheus/metrics # Local directory that stores Prom metrics
   serviceMonitor:
-    enabled: true # Enable ServiceMonitor Resource
-    labels:
-      release: kube-prometheus-stack
+    enabled: false # Enable ServiceMonitor Resource
+    labels: []
+      # release: kube-prometheus-stack
 
 imagePullSecrets: []
 nameOverride: mlflow
@@ -44,42 +45,35 @@ service:
 
 # Ingress settings
 ingress:
-  enabled: true
-  annotations: # Depends on your ingress controller
-    kubernetes.io/ingress.class: "nginx-internal"
-    cert-manager.io/cluster-issuer: "letsencrypt"
+  enabled: false
+  annotations: {} # Depends on your ingress controller
+    # kubernetes.io/ingress.class: "nginx-internal"
+    # cert-manager.io/cluster-issuer: "letsencrypt"
   hosts:
     - host: mlflow.your-domain.com
       paths:
         - /
-  tls:
-    - secretName: mlflow-tls
-      hosts:
-        - mlflow.your-domain.com
+  tls: []
+    # - secretName: mlflow-tls
+    #   hosts:
+    #     - mlflow.your-domain.com
 
-resources:
-  limits:
-    cpu: 500m
-    memory: 0.5Gi
-  requests:
-    cpu: 500m
-    memory: 0.5Gi
+resources: {}
+  # limits:
+  #   cpu: 500m
+  #   memory: 0.5Gi
+  # requests:
+  #   cpu: 500m
+  #   memory: 0.5Gi
 
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 100
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 80
 
 podAnnotations: {}
-
-podSecurityContext:
-  {}
-
-securityContext:
-  {}
+securityContext: {}
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
